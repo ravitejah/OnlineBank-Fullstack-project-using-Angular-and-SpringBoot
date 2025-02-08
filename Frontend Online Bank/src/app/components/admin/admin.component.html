@@ -1,0 +1,115 @@
+<div class="admin-container">
+  <h2>Admin Panel</h2>
+
+ 
+  <!-- ✅ Users Management -->
+  <h3>All Users</h3>
+  <table class="styled-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Mobile</th>
+      <th>Actions</th>
+    </tr>
+    <tr *ngFor="let user of users">
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.mobileNumber }}</td>
+      <td>
+        <button class="edit-btn" (click)="selectUser(user)">Edit</button>
+        <button class="delete-btn" (click)="deleteUser(user.id)">Delete</button>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ✅ Edit User Form -->
+  <div *ngIf="selectedUser" class="edit-user-form">
+    <h3>Edit User</h3>
+    <input type="text" [(ngModel)]="selectedUser.name" placeholder="Name" />
+    <input type="text" [(ngModel)]="selectedUser.email" placeholder="Email" />
+    <input type="text" [(ngModel)]="selectedUser.mobileNumber" placeholder="Mobile" />
+    <button (click)="updateUser()">Update</button>
+  </div>
+
+   <!-- ✅ Success & Error Messages -->
+   <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+   <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+ 
+
+  <!-- ✅ Accounts Management -->
+  <h3>All Accounts</h3>
+  <table class="styled-table">
+    <tr>
+      <th>Account Number</th>
+      <th>Balance</th>
+      <th>Update Balance</th>
+    </tr>
+    <tr *ngFor="let account of accounts">
+      <td>{{ account.accountNumber }}</td>
+      <td>₹{{ account.balance }}</td>
+      <td class="update-balance-container">
+        <input type="number" [(ngModel)]="account.newBalance" placeholder="New Balance" />
+        <button class="update-btn" (click)="updateBalance(account)">Update</button>
+      </td>
+    </tr>
+  </table>
+
+  <!-- ✅ Transactions Management -->
+  <h3>All Transactions</h3>
+
+  <!-- ✅ Filters & Sorting -->
+  <div class="filters">
+    <label>Filter:</label>
+    <select [(ngModel)]="selectedFilter" (change)="filterTransactions()">
+      <option value="ALL">All</option>
+      <option value="CREDIT">Credit</option>
+      <option value="DEBIT">Debit</option>
+    </select>
+
+    <label>Sort:</label>
+    <button (click)="toggleSortOrder()">
+      {{ sortOrder === 'desc' ? 'Latest First' : 'Oldest First' }}
+    </button>
+  </div>
+
+  <table class="transaction-table">
+    <tr>
+      <th>ID</th>
+      <th>Type</th>
+      <th>Amount</th>
+      <th>Account Number</th>
+      <th>Date</th>
+    </tr>
+    @if(filteredTransactions.length===0){
+      <tr *ngFor="let transaction of transactions">
+        <td>{{ transaction.transactionId }}</td>
+        <td>
+          <span [class.debit]="transaction.transactionType === 'DEBIT'"
+                [class.credit]="transaction.transactionType === 'CREDIT'">
+            {{ transaction.transactionType }}
+          </span>
+        </td>
+        <td>₹{{ transaction.amount }}</td>
+        <td>{{ transaction.accountNumber }}</td>
+        <td>{{ transaction.transactionDateTime | date:'short' }}</td>
+      </tr>
+    }
+    @else {
+      <tr *ngFor="let transaction of filteredTransactions">
+        <td>{{ transaction.transactionId }}</td>
+        <td>
+          <span [class.debit]="transaction.transactionType === 'DEBIT'"
+                [class.credit]="transaction.transactionType === 'CREDIT'">
+            {{ transaction.transactionType }}
+          </span>
+        </td>
+        <td>₹{{ transaction.amount }}</td>
+        <td>{{ transaction.accountNumber }}</td>
+        <td>{{ transaction.transactionDateTime | date:'short' }}</td>
+      </tr>
+    }
+  
+  </table>
+</div>
